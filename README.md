@@ -49,12 +49,12 @@ Un microservicio de autenticación basado en Go que utiliza el framework Fiber v
 
 ## Endpoints de la API
 
-- `GET /login` - Inicia el login con OAuth de Google
-- `GET /auth/google/callback` - Maneja el callback de OAuth
-- `GET /user/:id` - Obtiene usuario por ID
-- `DELETE /user` - Elimina el usuario actual
-- `PUT /user` - Actualiza el usuario actual
-- `POST /refresh` - Refresca el token JWT
+- `GET api/auth` - Inicia el login con OAuth de Google
+- `GET api/auth/google/callback` - Maneja el callback de OAuth
+- `GET api/user/:id` - Obtiene usuario por ID
+- `DELETE api/user` - Elimina el usuario actual
+- `PUT api/user` - Actualiza el usuario actual
+- `POST api/refresh` - Refresca el token JWT
 
 ## Contribuyendo
 
