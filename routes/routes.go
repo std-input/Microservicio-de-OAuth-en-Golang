@@ -25,8 +25,8 @@ func Routes(app *fiber.App) {
 		},
 	}))
 
-	api_v1.Delete("/me", handlers.DeleteUser)
+	api_v1.Delete("/user", handlers.DeleteUser)
 
-	api_v1.Put("/me", handlers.UpdateUser)
+	api_v1.Put("/user", handlers.UpdateUser)
 
 }
