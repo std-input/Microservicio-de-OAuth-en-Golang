@@ -17,7 +17,7 @@ func Routes(app *fiber.App) {
 
 	api_v1.Get("/user/:id", handlers.GetUser)
 
-	api_v1.Post("/auth/refresh_token", handlers.RefreshToken)
+	api_v1.Post("/refresh", handlers.RefreshToken)
 
 	app.Use(jwtware.New(jwtware.Config{
 		SigningKey: jwtware.SigningKey{
