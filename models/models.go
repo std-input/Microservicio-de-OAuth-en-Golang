@@ -22,8 +22,8 @@ type SafeUser struct {
 }
 
 type RefreshToken struct {
-	User       User   `gorm:"foreignKey:UserID;references:ID"`
-	UserID     string `gorm:"primaryKey"`
+	User       User   `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:CASCADE"`
+	UserID     string `gorm:"primaryKey;not null"`
 	Expiration time.Time
 	Token      string
 }
