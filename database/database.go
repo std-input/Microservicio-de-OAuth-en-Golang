@@ -43,7 +43,6 @@ func GetUserById(id string) (int64, models.SafeUser) {
 }
 
 func DeleteUser(id string) int64 {
-	DB.Delete(models.RefreshToken{UserID: id})
 	return DB.Delete(models.User{ID: id}).RowsAffected
 }
 
