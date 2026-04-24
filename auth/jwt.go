@@ -2,7 +2,9 @@ package auth
 
 import (
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"errors"
 	"time"
 
@@ -13,12 +15,21 @@ import (
 )
 
 type UserTokens struct {
-	AccessToken  string
-	RefreshToken string
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+}
+
+func hash_secret(secret string) string {
+	hasher := sha256.New()
+	hasher.Write([]byte(secret + configs.Get("SECRET_KEY")))
+	return hex.EncodeToString(hasher.Sum(nil))
 }
 
 // Crea un JWT token y un refresh token para el usuario con la ID dada
 func CreateJWTToken(user models.User) (UserTokens, error) {
+	if user.ID == "" {
+		return UserTokens{}, errors.New("Usuario invalido")
+	}
 
 	claims := jwt.MapClaims{
 		"sub":  user.ID,
@@ -34,14 +45,15 @@ func CreateJWTToken(user models.User) (UserTokens, error) {
 
 	db := database.DB
 	refreshToken := GenerateToken(user.ID)
+	hashedToken := hash_secret(refreshToken)
 
 	userRefreshToken := models.RefreshToken{
 		UserID:     user.ID,
-		Token:      refreshToken,
+		Token:      hashedToken,
 		Expiration: time.Now().Add(time.Hour * 24), // El token de refresco expira en 1 dia
 	}
 	db.Where("user_id = ?", user.ID).FirstOrCreate(&userRefreshToken)
-	userRefreshToken.Token = refreshToken
+	userRefreshToken.Token = hashedToken
 	db.Save(&userRefreshToken)
 
 	return UserTokens{
@@ -62,7 +74,7 @@ func RefreshToken(token string) (UserTokens, error) {
 	// Verificar el token de refresco
 	var refreshToken models.RefreshToken
 	db := database.DB
-	results := db.Where("token = ?", token).First(&refreshToken).Preload("User")
+	results := db.Preload("User").Where("token = ?", hash_secret(token)).First(&refreshToken)
 	if results.RowsAffected == 0 {
 		return UserTokens{}, errors.New("Token de refresco no valido")
 	}
